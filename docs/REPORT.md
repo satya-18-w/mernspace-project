@@ -8,7 +8,7 @@
 | [Student 2 Name] | [Roll Number 2] | Microservices Containerization, K3s Kubernetes & Event Streaming |
 | [Student 3 Name] | [Roll Number 3] | Frontend Edge Deployment, Testing & Verification Operations |
 
-**Source code:** https://github.com/mernspace/mernspace-project · **Live Storefront (Vercel):** `https://mernspace-client.vercel.app` · **Live Admin Dashboard (AWS):** `http://13.207.240.55/admin/` · **API Gateway:** `http://13.207.240.55/api/` · **Demo video:** [Video link]
+**Source code:** https://github.com/satya-18-w/mernspace-project · **Live Storefront (Vercel):** `https://mernspace-client.vercel.app` · **Live Admin Dashboard (AWS):** `http://13.207.240.55/admin/` · **API Gateway:** `http://13.207.240.55/api/` · **Demo video:** [Video link]
 
 ## Abstract
 
