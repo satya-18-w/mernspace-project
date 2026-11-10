@@ -1,0 +1,5 @@
+aws/outputs.env
+aws/*.pem
+aws/.dockerconfigjson
+k8s/overlays/aws/runtime-config.yaml
+k8s/overlays/aws/kustomization.yaml

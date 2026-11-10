@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-service
+  labels:
+    app: notification-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-service
+  template:
+    metadata:
+      labels:
+        app: notification-service
+    spec:
+      imagePullSecrets:
+        - name: ecr-pull
+      containers:
+        - name: notification
+          image: mernspace/notification:latest
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: PUBLIC_ORIGIN
+              valueFrom:
+                configMapKeyRef: {name: mernspace-runtime, key: PUBLIC_ORIGIN}
+            - name: NODE_CONFIG
+              value: '{"frontend":{"clientUI":"$(PUBLIC_ORIGIN)"}}'
+          volumeMounts:
+            - name: config
+              mountPath: /app/config
+              readOnly: true
+          resources:
+            requests: {cpu: 50m, memory: 64Mi}
+            limits: {cpu: 300m, memory: 256Mi}
+      volumes:
+        - name: config
+          configMap: {name: notification-config}

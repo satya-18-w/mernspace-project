@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalog-service
+  labels:
+    app: catalog-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: catalog-service
+  template:
+    metadata:
+      labels:
+        app: catalog-service
+    spec:
+      imagePullSecrets:
+        - name: ecr-pull
+      containers:
+        - name: catalog
+          image: mernspace/catalog:latest
+          ports:
+            - name: http
+              containerPort: 5502
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: PUBLIC_ORIGIN
+              valueFrom:
+                configMapKeyRef: {name: mernspace-runtime, key: PUBLIC_ORIGIN}
+            - name: S3_BUCKET
+              valueFrom:
+                configMapKeyRef: {name: mernspace-runtime, key: S3_BUCKET}
+            - name: S3_REGION
+              valueFrom:
+                configMapKeyRef: {name: mernspace-runtime, key: S3_REGION}
+            - name: NODE_CONFIG
+              value: '{"frontend":{"clientUI":"$(PUBLIC_ORIGIN)","adminUI":"$(PUBLIC_ORIGIN)"},"s3":{"bucket":"$(S3_BUCKET)","region":"$(S3_REGION)"}}'
+          volumeMounts:
+            - name: config
+              mountPath: /app/config
+              readOnly: true
+          startupProbe:
+            httpGet: {path: /, port: 5502}
+            failureThreshold: 30
+            periodSeconds: 5
+          readinessProbe:
+            httpGet: {path: /, port: 5502}
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: {path: /, port: 5502}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          resources:
+            requests: {cpu: 100m, memory: 128Mi}
+            limits: {cpu: 750m, memory: 512Mi}
+      volumes:
+        - name: config
+          configMap: {name: catalog-config}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalog-service
+spec:
+  selector:
+    app: catalog-service
+  ports:
+    - port: 5502
+      targetPort: 5502

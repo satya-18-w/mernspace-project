@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build and production artifacts
+dist/
+build/
+.next/
+out/
+coverage/
+*.tsbuildinfo
+.turbo/
+.cache/
+
+# Archives and packages
+*.zip
+*.tar.gz
+*.tgz
+mernspace-deployment-package.zip
+
+# Environment and sensitive keys
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.pem
+*.key
+outputs.env
+.dockerconfigjson
+secrets/
+infra/aws/outputs.env
+infra/aws/*.pem
+infra/aws/.dockerconfigjson
+infra/local/secrets/
+infra/k8s/overlays/aws/runtime-config.yaml
+infra/k8s/overlays/aws/kustomization.yaml
+
+# Logs and runtime data
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# System & IDE files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo

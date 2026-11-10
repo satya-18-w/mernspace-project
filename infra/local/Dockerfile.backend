@@ -1,0 +1,31 @@
+# Parameterized production image for the five TypeScript backend services.
+# Build args:
+#   START_FILE = compiled entrypoint relative to /app (auth/catalog: src/server.js,
+#                order/notification/ws: server.js)
+ARG NODE_VERSION=22
+
+FROM node:${NODE_VERSION}-alpine AS builder
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci --ignore-scripts
+
+COPY . .
+RUN npx tsc -p tsconfig.json
+
+FROM node:${NODE_VERSION}-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+
+COPY package*.json ./
+RUN npm ci --omit=dev --ignore-scripts
+
+COPY --from=builder /app/dist ./
+
+ARG START_FILE=server.js
+ENV START_FILE=${START_FILE}
+
+RUN mkdir -p /app/logs && chown -R node:node /app
+USER node
+
+CMD ["sh", "-c", "exec node ${START_FILE}"]

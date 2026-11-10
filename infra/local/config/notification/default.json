@@ -1,0 +1,25 @@
+{
+    "kafka": {
+        "broker": [
+            "kafka:9092"
+        ],
+        "ssl": false,
+        "sasl": {
+            "username": "",
+            "password": ""
+        }
+    },
+    "mail": {
+        "host": "mailpit",
+        "port": 1025,
+        "secure": false,
+        "auth": {
+            "user": "",
+            "pass": ""
+        },
+        "from": "noreply@mernspace.local"
+    },
+    "frontend": {
+        "clientUI": "http://localhost:8080"
+    }
+}

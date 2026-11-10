@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-ui
+  labels:
+    app: client-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: client-ui
+  template:
+    metadata:
+      labels:
+        app: client-ui
+    spec:
+      imagePullSecrets:
+        - name: ecr-pull
+      containers:
+        - name: client
+          image: mernspace/client-ui:latest
+          ports:
+            - name: http
+              containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: BACKEND_URL
+              value: http://gateway
+          startupProbe:
+            httpGet: {path: /, port: 3000}
+            failureThreshold: 30
+            periodSeconds: 5
+          readinessProbe:
+            httpGet: {path: /, port: 3000}
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: {path: /, port: 3000}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          resources:
+            requests: {cpu: 100m, memory: 128Mi}
+            limits: {cpu: 500m, memory: 512Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: client-ui
+spec:
+  selector:
+    app: client-ui
+  ports:
+    - port: 3000
+      targetPort: 3000

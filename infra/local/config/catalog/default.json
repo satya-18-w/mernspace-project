@@ -1,0 +1,25 @@
+{
+    "server": {
+        "port": 5502
+    },
+    "database": {
+        "url": "mongodb://mongo:27017/catalog"
+    },
+    "kafka": {
+        "broker": ["kafka:9092"],
+        "ssl": false
+    },
+    "frontend": {
+        "clientUI": "http://localhost:8080",
+        "adminUI": "http://localhost:8081"
+    },
+    "auth": {
+        "jwksUri": "http://auth-service:5501/.well-known/jwks.json"
+    },
+    "s3": {
+        "region": "us-east-1",
+        "accessKeyId": "local-placeholder",
+        "secretAccessKey": "local-placeholder",
+        "bucket": "mernspace-local"
+    }
+}

@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ws-service
+  labels:
+    app: ws-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ws-service
+  template:
+    metadata:
+      labels:
+        app: ws-service
+    spec:
+      imagePullSecrets:
+        - name: ecr-pull
+      containers:
+        - name: ws
+          image: mernspace/ws:latest
+          ports:
+            - name: http
+              containerPort: 5504
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: PUBLIC_ORIGIN
+              valueFrom:
+                configMapKeyRef: {name: mernspace-runtime, key: PUBLIC_ORIGIN}
+            - name: NODE_CONFIG
+              value: '{"frontend":{"clientUI":"$(PUBLIC_ORIGIN)","adminUI":"$(PUBLIC_ORIGIN)"}}'
+          volumeMounts:
+            - name: config
+              mountPath: /app/config
+              readOnly: true
+          startupProbe:
+            tcpSocket: {port: 5504}
+            failureThreshold: 60
+            periodSeconds: 5
+          readinessProbe:
+            tcpSocket: {port: 5504}
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket: {port: 5504}
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          resources:
+            requests: {cpu: 50m, memory: 64Mi}
+            limits: {cpu: 300m, memory: 256Mi}
+      volumes:
+        - name: config
+          configMap: {name: ws-config}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ws-service
+spec:
+  selector:
+    app: ws-service
+  ports:
+    - port: 5504
+      targetPort: 5504

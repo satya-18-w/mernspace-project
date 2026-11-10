@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mernspace-runtime
+data:
+  PUBLIC_ORIGIN: "http://localhost"
+  S3_BUCKET: "replace-me"
+  S3_REGION: "ap-south-1"

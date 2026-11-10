@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-ui
+  labels:
+    app: admin-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admin-ui
+  template:
+    metadata:
+      labels:
+        app: admin-ui
+    spec:
+      imagePullSecrets:
+        - name: ecr-pull
+      containers:
+        - name: admin
+          image: mernspace/admin-ui:latest
+          ports:
+            - name: http
+              containerPort: 80
+          startupProbe:
+            httpGet: {path: /admin/, port: 80}
+            failureThreshold: 20
+            periodSeconds: 5
+          readinessProbe:
+            httpGet: {path: /admin/, port: 80}
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: {path: /admin/, port: 80}
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          resources:
+            requests: {cpu: 20m, memory: 32Mi}
+            limits: {cpu: 200m, memory: 128Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-ui
+spec:
+  selector:
+    app: admin-ui
+  ports:
+    - port: 80
+      targetPort: 80

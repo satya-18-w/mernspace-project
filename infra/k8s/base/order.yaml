@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-service
+  labels:
+    app: order-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order-service
+  template:
+    metadata:
+      labels:
+        app: order-service
+    spec:
+      imagePullSecrets:
+        - name: ecr-pull
+      containers:
+        - name: order
+          image: mernspace/order:latest
+          ports:
+            - name: http
+              containerPort: 5503
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: PUBLIC_ORIGIN
+              valueFrom:
+                configMapKeyRef: {name: mernspace-runtime, key: PUBLIC_ORIGIN}
+            - name: NODE_CONFIG
+              value: '{"frontend":{"clientUI":"$(PUBLIC_ORIGIN)","adminUI":"$(PUBLIC_ORIGIN)"}}'
+          volumeMounts:
+            - name: config
+              mountPath: /app/config
+              readOnly: true
+          startupProbe:
+            httpGet: {path: /, port: 5503}
+            failureThreshold: 60
+            periodSeconds: 5
+          readinessProbe:
+            httpGet: {path: /, port: 5503}
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: {path: /, port: 5503}
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          resources:
+            requests: {cpu: 100m, memory: 128Mi}
+            limits: {cpu: 750m, memory: 512Mi}
+      volumes:
+        - name: config
+          configMap: {name: order-config}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-service
+spec:
+  selector:
+    app: order-service
+  ports:
+    - port: 5503
+      targetPort: 5503

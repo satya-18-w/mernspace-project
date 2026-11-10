@@ -1,0 +1,49 @@
+ARG NODE_VERSION=22
+
+FROM node:${NODE_VERSION}-alpine AS builder
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci --ignore-scripts
+
+COPY . .
+
+# VITE_* values are inlined into the browser bundle at build time.
+ARG VITE_BACKEND_API_URL=http://localhost:8080
+ARG VITE_SOCKET_SERVICE_URL=http://localhost:8080
+ARG VITE_BASE_PATH=/
+ENV VITE_BACKEND_API_URL=${VITE_BACKEND_API_URL}
+ENV VITE_SOCKET_SERVICE_URL=${VITE_SOCKET_SERVICE_URL}
+ENV VITE_BASE_PATH=${VITE_BASE_PATH}
+
+RUN npm run build
+
+FROM nginx:1.27-alpine
+ARG VITE_BASE_PATH=/
+COPY --from=builder /app/dist /tmp/dist
+RUN if [ "$VITE_BASE_PATH" = "/" ]; then \
+        DEST=/usr/share/nginx/html; \
+    else \
+        DEST="/usr/share/nginx/html${VITE_BASE_PATH%/}"; \
+    fi \
+    && mkdir -p "$DEST" \
+    && cp -a /tmp/dist/. "$DEST"/ \
+    && rm -rf /tmp/dist
+
+RUN printf '%s\n' \
+    'server {' \
+    '    listen 80;' \
+    '    server_name _;' \
+    '    root /usr/share/nginx/html;' \
+    '    index index.html;' \
+    '    location = /admin {' \
+    '        return 301 /admin/;' \
+    '    }' \
+    '    location /admin/ {' \
+    '        try_files $uri $uri/ /admin/index.html;' \
+    '    }' \
+    '    location / {' \
+    '        try_files $uri $uri/ /index.html;' \
+    '    }' \
+    '}' > /etc/nginx/conf.d/default.conf
+EXPOSE 80

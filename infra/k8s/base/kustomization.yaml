@@ -1,0 +1,36 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+resources:
+  - namespace.yaml
+  - auth.yaml
+  - catalog.yaml
+  - order.yaml
+  - ws.yaml
+  - notification.yaml
+  - client.yaml
+  - admin.yaml
+  - gateway.yaml
+  - mailpit.yaml
+  - mongo.yaml
+  - kafka.yaml
+
+configMapGenerator:
+  - name: catalog-config
+    files:
+      - config/catalog/default.json
+  - name: order-config
+    files:
+      - config/order/default.json
+  - name: notification-config
+    files:
+      - config/notification/default.json
+  - name: ws-config
+    files:
+      - config/ws/default.json
+  - name: gateway-config
+    files:
+      - gateway/nginx.conf

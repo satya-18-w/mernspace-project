@@ -1,0 +1,33 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: mernspace
+
+resources:
+  - ../../base
+  - runtime-config.yaml
+  - ingress.yaml
+  - logging.yaml
+
+images:
+  - name: mernspace/auth
+    newName: ${ECR_REGISTRY}/mernspace/auth
+    newTag: ${TAG}
+  - name: mernspace/catalog
+    newName: ${ECR_REGISTRY}/mernspace/catalog
+    newTag: ${CATALOG_TAG}
+  - name: mernspace/order
+    newName: ${ECR_REGISTRY}/mernspace/order
+    newTag: ${TAG}
+  - name: mernspace/notification
+    newName: ${ECR_REGISTRY}/mernspace/notification
+    newTag: ${TAG}
+  - name: mernspace/ws
+    newName: ${ECR_REGISTRY}/mernspace/ws
+    newTag: ${TAG}
+  - name: mernspace/client-ui
+    newName: ${ECR_REGISTRY}/mernspace/client-ui
+    newTag: ${TAG}
+  - name: mernspace/admin-ui
+    newName: ${ECR_REGISTRY}/mernspace/admin-ui
+    newTag: ${TAG}

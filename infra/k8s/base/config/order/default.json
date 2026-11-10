@@ -1,0 +1,22 @@
+{
+    "server": {
+        "port": 5503
+    },
+    "database": {
+        "url": "mongodb://mongo:27017/order"
+    },
+    "kafka": {
+        "broker": ["kafka:9092"],
+        "ssl": false
+    },
+    "frontend": {
+        "clientUI": "http://localhost",
+        "adminUI": "http://localhost"
+    },
+    "auth": {
+        "jwksUri": "http://auth-service:5501/.well-known/jwks.json"
+    },
+    "stripe": {
+        "secretKey": "sk_test_replace_me"
+    }
+}

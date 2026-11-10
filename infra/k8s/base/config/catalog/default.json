@@ -1,0 +1,24 @@
+{
+    "server": {
+        "port": 5502
+    },
+    "database": {
+        "url": "mongodb://mongo:27017/catalog"
+    },
+    "kafka": {
+        "broker": ["kafka:9092"],
+        "ssl": false
+    },
+    "frontend": {
+        "clientUI": "http://localhost",
+        "adminUI": "http://localhost"
+    },
+    "auth": {
+        "jwksUri": "http://auth-service:5501/.well-known/jwks.json"
+    },
+    "s3": {
+        "region": "ap-south-1",
+        "bucket": "replace-me",
+        "urlExpirySeconds": 86400
+    }
+}

@@ -1,0 +1,17 @@
+{
+    "server": {
+        "port": 5504
+    },
+    "kafka": {
+        "broker": ["kafka:9092"],
+        "ssl": false,
+        "sasl": {
+            "username": "",
+            "password": ""
+        }
+    },
+    "frontend": {
+        "clientUI": "http://localhost",
+        "adminUI": "http://localhost"
+    }
+}
